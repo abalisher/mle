@@ -1,0 +1,35 @@
+stages:
+  get_data:
+    cmd: python scripts/data.py
+    deps:
+      - scripts/data.py
+    params:
+      - index_col
+    outs:
+      - data/initial_data.csv
+
+  fit_model:
+    cmd: python scripts/fit.py
+    deps:
+      - data/initial_data.csv
+      - scripts/fit.py
+    params:
+      - index_col
+      - target_col
+      - one_hot_drop
+      - model
+    outs:
+      - models/fitted_model.pkl
+
+  evaluate_model:
+    cmd: python scripts/evaluate.py
+    deps:
+      - data/initial_data.csv
+      - models/fitted_model.pkl
+      - scripts/evaluate.py
+    params:
+      - n_splits
+      - metrics
+      - n_jobs
+    metrics:
+      - cv_results/cv_res.json
